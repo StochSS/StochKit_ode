@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+#check environment variables and run ode
+
+#set -x
+
+#Linux
+export LD_LIBRARY_PATH="$LD_LIRARY_PATH:$STOCHKIT_HOME/libs/boost_1_53_0/stage/lib/"
+#Mac
+export DYLD_LIBRARY_PATH="$DYLD_LIRARY_PATH:$STOCHKIT_HOME/libs/boost_1_53_0/stage/lib/"
+
+exec "$STOCHKIT_ODE/bin/stochkit_ode" $@
