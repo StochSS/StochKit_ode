@@ -56,9 +56,6 @@
 /* Problem Constants */
 
 /* INSERT GENERATED CONSTANTS */
-#define RTOL  RCONST(1.0e-6)   /* scalar relative tolerance            */
-#define ATOL  RCONST(1.0e-9)    /* scalar absolute tolerance components */
-#define MXSTEPS 10000           /* max steps before tout */
 /* END OF GENERATED CONSTANTS */
 
 #define ZERO  RCONST(0.0)

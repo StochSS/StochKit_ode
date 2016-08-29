@@ -104,6 +104,11 @@ int main(int ac, char* av[])
 
 		std::vector<std::string> rate_constants_subset = commandLine.getRateConstantsSubset();
 		std::vector<std::string> parameters_subset = commandLine.getParametersSubset();
+
+                double RTOL = commandLine.getRTOL(), ATOL = commandLine.getATOL();
+
+                unsigned int MXSTEPS = commandLine.getMXSTEPS();
+
 #ifdef DEBUG
 	std::cout << "Species List by Index:" << std::endl;
 	for(std::size_t i=0;i<species_subset.size();++i){
@@ -125,14 +130,14 @@ int main(int ac, char* av[])
 			StandardDriverTypes::propensitiesType,
 			StandardDriverTypes::graphType> model(modelFileName);
 
-                model.writeODEFile(tempTemplateFileName,tempODEFileName,species_subset,species_names,rate_constants_subset);
+                model.writeODEFile(tempTemplateFileName,tempODEFileName,species_subset,species_names,rate_constants_subset, RTOL, ATOL, MXSTEPS);
 	} else {
 		Input_ODE_before_compile_mixed<StandardDriverTypes::populationType,
                         StandardDriverTypes::stoichiometryType,
 			StandardDriverTypes::propensitiesType,
 			StandardDriverTypes::graphType> model(modelFileName);
 
-                model.writeODEFile(tempTemplateFileName,tempODEFileName,species_subset,species_names,parameters_subset);
+                model.writeODEFile(tempTemplateFileName,tempODEFileName,species_subset,species_names,parameters_subset, RTOL, ATOL, MXSTEPS);
 	}
 
                 //record current path so we can cd back to it after compiling

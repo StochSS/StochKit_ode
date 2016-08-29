@@ -12,6 +12,9 @@ visible("command line options")
 		("model,m", boost::program_options::value<std::string>(&modelFileName),"**REQUIRED Model file name")
 		("time,t",boost::program_options::value<double>(&simulationTime),"**REQUIRED Simulation time (i.e. run each realization from t=0 to t=time)")
 		("intervals,i",boost::program_options::value<std::size_t>(&intervals)->default_value(10),"Number of intervals.\n0=keep data only at simulation end time.\n1=keep data at start and end time.\n2=keep data at start, middle, and end times.\netc.\nNote data is stored at (intervals+1) time points.")
+		("reltol,r",boost::program_options::value<double>(&RTOL)->default_value(1e-6),"Relative tolerance of ODE solver.")
+		("abstol,a",boost::program_options::value<double>(&ATOL)->default_value(1e-9),"Absolute tolderance of ODE solver.")
+		("mxsteps",boost::program_options::value<unsigned int>(&MXSTEPS)->default_value(10000),"Maximum number of steps taken by ODE solver.")
 		("species",boost::program_options::value<std::vector<std::string> >()->multitoken(),"List of subset of species (names or indices) to include in output.  If not specified, all species are included in output.")
 		("rate-constants",boost::program_options::value<std::vector<std::string> >()->multitoken(),"List of subset of rate constants (in the format of names of reactions) to include in sensitivity analysis in a pure mass action reaction system. If not specified, all rate constants are included in sensitivity analysis. CANNOT be used simultaneously with --parameters")
 		("parameters",boost::program_options::value<std::vector<std::string> >()->multitoken(),"List of subset of parameters (in the format of names of parameters) to include in sensitivity analysis. If not specified, all rate constants or parameters are included in sensitivity analysis. CANNOT be used simultaneously with --rate-constants")
@@ -133,6 +136,18 @@ std::string ODECommandLine::getCmdArgs() const {
 	return cmdArgs;
 }
 
+double ODECommandLine::getRTOL() const {
+	return RTOL;
+}
+
+double ODECommandLine::getATOL() const {
+	return ATOL;
+}
+
+unsigned int ODECommandLine::getMXSTEPS() const {
+	return MXSTEPS;
+}
+
 void ODECommandLine::parse(int ac, char* av[]) {
 	try {
 		boost::program_options::store(boost::program_options::parse_command_line(ac,av,combined), vm);
@@ -153,6 +168,27 @@ void ODECommandLine::parse(int ac, char* av[]) {
 		std::cout << "StochKit ERROR (ODECommandLine::parse): missing required parameter(s).  Run with --help for a list of required and optional parameters.\n";
 		exit(1);
 	}
+
+        if (vm.count("ATOL")) {
+                if(ATOL <= 0.0) {
+                        std::cout << "StochKit ERROR (ODECommandLine::parse): ATOL must be a number greater than zero" << std::endl;
+                        exit(1);
+                }
+        }
+
+        if (vm.count("RTOL")) {
+                if(RTOL <= 0.0) {
+                        std::cout << "StochKit ERROR (ODECommandLine::parse): RTOL must be a number greater than zero" << std::endl;
+                        exit(1);
+                }
+        }
+
+        if (vm.count("MXSTEPS")) {
+                if(MXSTEPS <= 0) {
+                        std::cout << "StochKit ERROR (ODECommandLine::parse): MXSTEPS must be a number greater than zero" << std::endl;
+                        exit(1);
+                }
+        }
 
 	if (vm.count("species")) {
 		species=vm["species"].as<std::vector<std::string> >();
