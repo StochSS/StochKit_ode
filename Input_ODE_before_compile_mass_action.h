@@ -32,7 +32,8 @@ namespace STOCHKIT
         std::vector<std::string> jacobian_rate;  // df/dc
         std::vector<double>      rateList;       // c
 	bool ODE_ready;
-	double volume, NATIMESVOLUME;
+	double volume, NATIMESVOLUME, RTOL, ATOL;
+        unsigned int MXSTEPS;
 	static const double AvogadroConstant = 6.02214E23;
         typedef Input<_populationVectorType, _stoichiometryType, _propensitiesFunctorType, _dependencyGraphType> Base;
         typedef typename Base::_populationValueType _populationValueType;
@@ -321,7 +322,7 @@ namespace STOCHKIT
 	}
 
  public:
-	bool writeODEFile(char *ODETemplateFileName, char *ODEFileName, std::vector<std::size_t> output_species_index, std::vector<std::string> output_species_names, std::vector<std::string> rate_constants_subset)
+	bool writeODEFile(char *ODETemplateFileName, char *ODEFileName, std::vector<std::size_t> output_species_index, std::vector<std::string> output_species_names, std::vector<std::string> rate_constants_subset, double RTOL, double ATOL, unsigned int MSTEPS)
 	{
 		if(!ODE_ready){
 			getODEReady();
@@ -396,6 +397,9 @@ namespace STOCHKIT
 			} else {
 				if(line.find("CONSTANTS") != std::string::npos){
 					ODEFile << line << std::endl;
+					ODEFile << "#define RTOL  RCONST(" << RTOL << ")   /* scalar relative tolerance            */" << std::endl;
+					ODEFile << "#define ATOL  RCONST(" << ATOL << ")    /* scalar absolute tolerance components */" << std::endl;
+					ODEFile << "#define MXSTEPS  " << MXSTEPS << "           /* max steps before tout */" << std::endl;
 					ODEFile << "#define NEQ   " << this->NumberOfSpecies << "          /* number of equations  */" << std::endl;
 					ODEFile << "#define OUTPUT_SPECIES_NUMBER  " << output_species_index.size() << "    /* number of species in output  */" << std::endl;
 					ODEFile << "#define NUMPAR  " << this->NumberOfReactions << "    /* number of parameters/rate constants */" << std::endl;

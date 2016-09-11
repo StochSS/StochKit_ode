@@ -53,6 +53,11 @@ namespace STOCHKIT
 
   bool getSensiFlag() const;
 
+  double getRTOL() const;
+  double getATOL() const;
+
+  unsigned int getMXSTEPS() const;
+
  protected:
   void parse(int ac, char* av[]);
 
@@ -66,7 +71,8 @@ namespace STOCHKIT
   
   std::string modelFileName;
   std::string ODETemplateFileName;
-  double simulationTime;
+  double simulationTime, RTOL, ATOL;
+  unsigned int MXSTEPS;
   std::size_t intervals;
 
   std::vector<std::string> species;//command line values: could be species indices or names
